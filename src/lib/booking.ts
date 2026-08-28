@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export type BookingData = {
   name: string
   phone: string
@@ -22,31 +24,43 @@ function cleanText(value: string, maxLength = 120) {
   return value.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, maxLength)
 }
 
+export function createBookingSchema(now = new Date()) {
+  const minimumDate = localIsoDate(now)
+
+  return z.object({
+    name: z.string().refine((value) => cleanText(value).length >= 2, {
+      message: 'Conte seu nome completo para continuarmos.',
+    }),
+    phone: z.string().refine((value) => {
+      const digits = value.replace(/\D/g, '')
+      return digits.length >= 10 && digits.length <= 11
+    }, {
+      message: 'Confira o telefone: inclua DDD e número.',
+    }),
+    treatment: z.string().refine((value) => Boolean(cleanText(value, 80)), {
+      message: 'Escolha o tratamento que você quer conversar sobre.',
+    }),
+    preferredDate: z.string().refine(
+      (value) => ISO_DATE.test(value) && value >= minimumDate,
+      { message: 'Escolha uma data a partir de hoje.' },
+    ),
+    preferredTime: z.string().refine((value) => TIME.test(value), {
+      message: 'Indique um horário aproximado.',
+    }),
+  })
+}
+
 export function validateBooking(data: BookingData, now = new Date()): BookingErrors {
-  const errors: BookingErrors = {}
-  const phoneDigits = data.phone.replace(/\D/g, '')
+  const result = createBookingSchema(now).safeParse(data)
+  if (result.success) return {}
 
-  if (cleanText(data.name).length < 2) {
-    errors.name = 'Conte seu nome completo para continuarmos.'
-  }
-
-  if (phoneDigits.length < 10 || phoneDigits.length > 11) {
-    errors.phone = 'Confira o telefone: inclua DDD e número.'
-  }
-
-  if (!cleanText(data.treatment, 80)) {
-    errors.treatment = 'Escolha o tratamento que você quer conversar sobre.'
-  }
-
-  if (!ISO_DATE.test(data.preferredDate) || data.preferredDate < localIsoDate(now)) {
-    errors.preferredDate = 'Escolha uma data a partir de hoje.'
-  }
-
-  if (!TIME.test(data.preferredTime)) {
-    errors.preferredTime = 'Indique um horário aproximado.'
-  }
-
-  return errors
+  return result.error.issues.reduce<BookingErrors>((errors, issue) => {
+    const field = issue.path[0]
+    if (typeof field === 'string' && field in data && !errors[field as keyof BookingData]) {
+      errors[field as keyof BookingData] = issue.message
+    }
+    return errors
+  }, {})
 }
 
 export function formatBrazilianDate(value: string) {

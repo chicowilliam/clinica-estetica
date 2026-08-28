@@ -1,8 +1,24 @@
-import { type FormEvent, useMemo, useRef, useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowRightIcon } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 
-import { treatments } from '../content'
-import { buildWhatsAppUrl, type BookingData, type BookingErrors, validateBooking } from '../lib/booking'
-import { ArrowIcon, WhatsAppIcon } from './icons'
+import { Button } from '@/components/ui/button'
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Spinner } from '@/components/ui/spinner'
+import { treatments } from '@/content'
+import { buildWhatsAppUrl, type BookingData, createBookingSchema } from '@/lib/booking'
+
+import { WhatsAppIcon } from './icons'
 
 const initialData: BookingData = {
   name: '',
@@ -12,8 +28,6 @@ const initialData: BookingData = {
   preferredTime: '',
 }
 
-const fieldOrder: (keyof BookingData)[] = ['name', 'phone', 'treatment', 'preferredDate', 'preferredTime']
-
 function today() {
   const date = new Date()
   const year = date.getFullYear()
@@ -22,44 +36,28 @@ function today() {
   return `${year}-${month}-${day}`
 }
 
-function FieldError({ id, children }: { id: string; children?: string }) {
-  return children ? (
-    <p className="field-error" id={id} role="alert">
-      {children}
-    </p>
-  ) : null
-}
-
 export function BookingForm() {
-  const [data, setData] = useState(initialData)
-  const [errors, setErrors] = useState<BookingErrors>({})
-  const [success, setSuccess] = useState('')
-  const formRef = useRef<HTMLFormElement>(null)
   const minimumDate = useMemo(today, [])
+  const schema = useMemo(() => createBookingSchema(), [])
+  const [success, setSuccess] = useState('')
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<BookingData>({
+    resolver: zodResolver(schema),
+    defaultValues: initialData,
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+  })
 
-  function update(field: keyof BookingData, value: string) {
-    setData((current) => ({ ...current, [field]: value }))
-    setErrors((current) => ({ ...current, [field]: undefined }))
+  const submit = handleSubmit(async (data) => {
     setSuccess('')
-  }
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const nextErrors = validateBooking(data)
-    setErrors(nextErrors)
-    setSuccess('')
-
-    const firstInvalid = fieldOrder.find((field) => nextErrors[field])
-    if (firstInvalid) {
-      const field = formRef.current?.elements.namedItem(firstInvalid)
-      if (field instanceof HTMLElement) field.focus()
-      return
-    }
-
     const clinicPhone = import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined
     window.open(buildWhatsAppUrl(data, clinicPhone), '_blank', 'noopener,noreferrer')
-    setSuccess('Dados conferidos. Abrimos o WhatsApp com sua solicitação.')
-  }
+    setSuccess('Solicitação preparada. O WhatsApp foi aberto para você revisar e enviar a mensagem.')
+  })
 
   const directMessage = buildWhatsAppUrl({
     ...initialData,
@@ -72,98 +70,116 @@ export function BookingForm() {
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.58fr)] lg:gap-18">
-      <form ref={formRef} className="booking-form" noValidate onSubmit={submit}>
-        <div className="grid gap-6 sm:grid-cols-2">
-          <label className="field sm:col-span-2">
-            <span>Nome</span>
-            <input
-              name="name"
+      <form className="booking-form" noValidate onSubmit={submit}>
+        <FieldGroup className="sm:grid sm:grid-cols-2">
+          <Field className="sm:col-span-2" data-invalid={Boolean(errors.name)}>
+            <FieldLabel htmlFor="name">Nome</FieldLabel>
+            <Input
+              id="name"
               type="text"
               autoComplete="name"
               maxLength={120}
-              value={data.name}
               aria-invalid={Boolean(errors.name)}
               aria-describedby={errors.name ? 'name-error' : undefined}
-              onChange={(event) => update('name', event.target.value)}
+              {...register('name')}
             />
-            <FieldError id="name-error">{errors.name}</FieldError>
-          </label>
+            <FieldError id="name-error">{errors.name?.message}</FieldError>
+          </Field>
 
-          <label className="field sm:col-span-2">
-            <span>Telefone</span>
-            <input
-              name="phone"
+          <Field className="sm:col-span-2" data-invalid={Boolean(errors.phone)}>
+            <FieldLabel htmlFor="phone">Telefone</FieldLabel>
+            <Input
+              id="phone"
               type="tel"
               inputMode="tel"
               autoComplete="tel"
               maxLength={20}
               placeholder="(11) 98765-4321"
-              value={data.phone}
               aria-invalid={Boolean(errors.phone)}
               aria-describedby={errors.phone ? 'phone-error' : undefined}
-              onChange={(event) => update('phone', event.target.value)}
+              {...register('phone')}
             />
-            <FieldError id="phone-error">{errors.phone}</FieldError>
-          </label>
+            <FieldError id="phone-error">{errors.phone?.message}</FieldError>
+          </Field>
 
-          <label className="field sm:col-span-2">
-            <span>Tratamento de interesse</span>
-            <select
-              name="treatment"
-              value={data.treatment}
-              aria-invalid={Boolean(errors.treatment)}
-              aria-describedby={errors.treatment ? 'treatment-error' : undefined}
-              onChange={(event) => update('treatment', event.target.value)}
-            >
-              <option value="">Selecione uma opção</option>
-              {treatments.map((treatment) => (
-                <option value={treatment.name} key={treatment.name}>
-                  {treatment.name}
-                </option>
-              ))}
-              <option value="Ainda não sei">Ainda não sei</option>
-            </select>
-            <FieldError id="treatment-error">{errors.treatment}</FieldError>
-          </label>
+          <Controller
+            control={control}
+            name="treatment"
+            render={({ field }) => (
+              <Field className="sm:col-span-2" data-invalid={Boolean(errors.treatment)}>
+                <FieldLabel htmlFor="treatment">Tratamento de interesse</FieldLabel>
+                <Select
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={(value) => {
+                    setSuccess('')
+                    field.onChange(value)
+                  }}
+                  onOpenChange={(open) => {
+                    if (!open) field.onBlur()
+                  }}
+                >
+                  <SelectTrigger
+                    id="treatment"
+                    ref={field.ref}
+                    aria-invalid={Boolean(errors.treatment)}
+                    aria-describedby={errors.treatment ? 'treatment-error' : undefined}
+                  >
+                    <SelectValue placeholder="Selecione uma opção" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {treatments.map((treatment) => (
+                        <SelectItem value={treatment.name} key={treatment.name}>
+                          {treatment.name}
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="Ainda não sei">Ainda não sei</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FieldError id="treatment-error">{errors.treatment?.message}</FieldError>
+              </Field>
+            )}
+          />
 
-          <label className="field">
-            <span>Dia preferido</span>
-            <input
-              name="preferredDate"
+          <Field data-invalid={Boolean(errors.preferredDate)}>
+            <FieldLabel htmlFor="preferredDate">Dia preferido</FieldLabel>
+            <Input
+              id="preferredDate"
               type="date"
               min={minimumDate}
-              value={data.preferredDate}
               aria-invalid={Boolean(errors.preferredDate)}
               aria-describedby={errors.preferredDate ? 'date-error' : undefined}
-              onChange={(event) => update('preferredDate', event.target.value)}
+              {...register('preferredDate')}
             />
-            <FieldError id="date-error">{errors.preferredDate}</FieldError>
-          </label>
+            <FieldError id="date-error">{errors.preferredDate?.message}</FieldError>
+          </Field>
 
-          <label className="field">
-            <span>Horário preferido</span>
-            <input
-              name="preferredTime"
+          <Field data-invalid={Boolean(errors.preferredTime)}>
+            <FieldLabel htmlFor="preferredTime">Horário preferido</FieldLabel>
+            <Input
+              id="preferredTime"
               type="time"
               min="08:00"
               max="19:00"
               step="1800"
-              value={data.preferredTime}
               aria-invalid={Boolean(errors.preferredTime)}
               aria-describedby={errors.preferredTime ? 'time-error' : undefined}
-              onChange={(event) => update('preferredTime', event.target.value)}
+              {...register('preferredTime')}
             />
-            <FieldError id="time-error">{errors.preferredTime}</FieldError>
-          </label>
-        </div>
+            <FieldError id="time-error">{errors.preferredTime?.message}</FieldError>
+          </Field>
+        </FieldGroup>
 
-        <button className="button-primary mt-8 w-full sm:w-auto" type="submit">
+        <Button className="mt-8 w-full sm:w-auto" type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
+          {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
           Preparar pedido no WhatsApp
-          <ArrowIcon className="size-4" />
-        </button>
-        <p className="mt-3 max-w-xl text-xs leading-relaxed text-muted">
-          O envio é concluído no WhatsApp. A equipe responde para confirmar disponibilidade; este formulário não reserva o horário automaticamente.
-        </p>
+          {!isSubmitting ? <ArrowRightIcon data-icon="inline-end" /> : null}
+        </Button>
+        <FieldDescription className="mt-3 max-w-xl">
+          O envio é concluído no WhatsApp. A equipe confirma a disponibilidade; este formulário não reserva o horário automaticamente.
+        </FieldDescription>
         {success ? (
           <p className="success-message" role="status">
             {success}
@@ -171,18 +187,18 @@ export function BookingForm() {
         ) : null}
       </form>
 
-      <aside className="border-t border-gold/60 pt-7 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
+      <aside className="booking-aside">
         <p className="eyebrow">Prefere conversar primeiro?</p>
-        <h3 className="mt-5 font-display text-4xl leading-[1.05] font-medium tracking-[-0.035em]">
-          A equipe responde pelo WhatsApp durante o horário de atendimento.
-        </h3>
-        <p className="mt-5 text-sm leading-7 text-muted">
+        <h3 className="subheading mt-5">A equipe responde pelo WhatsApp durante o horário de atendimento.</h3>
+        <p className="mt-5 text-sm leading-7 text-muted-foreground">
           Envie sua dúvida ou conte brevemente o que deseja tratar. A indicação de procedimento só acontece depois da avaliação.
         </p>
-        <a className="button-secondary mt-7" href={directMessage} target="_blank" rel="noreferrer">
-          <WhatsAppIcon className="size-4" />
-          Abrir WhatsApp
-        </a>
+        <Button asChild variant="outline" className="mt-7">
+          <a href={directMessage} target="_blank" rel="noreferrer">
+            <WhatsAppIcon data-icon="inline-start" />
+            Abrir WhatsApp
+          </a>
+        </Button>
       </aside>
     </div>
   )

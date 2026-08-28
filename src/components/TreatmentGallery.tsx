@@ -1,52 +1,100 @@
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useState } from 'react'
 
-import { treatments } from '../content'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { treatments } from '@/content'
 
-export function TreatmentGallery() {
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const selected = treatments[selectedIndex]
+function TreatmentImage({ index, decorative = false }: { index: number; decorative?: boolean }) {
+  const treatment = treatments[index]
+  const reduceMotion = useReducedMotion()
 
   return (
-    <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1.06fr)_minmax(320px,0.72fr)] lg:gap-16">
-      <div className="border-t border-gold/70">
-        {treatments.map((treatment, index) => {
-          const active = index === selectedIndex
-          return (
-            <button
-              className="treatment-row"
-              type="button"
-              aria-pressed={active}
-              onClick={() => setSelectedIndex(index)}
-              onFocus={() => setSelectedIndex(index)}
-              key={treatment.name}
-            >
-              <span className="min-w-0">
-                <span className="block font-display text-[clamp(1.38rem,3vw,2.15rem)] leading-[1.08] font-medium tracking-[-0.025em]">
-                  {treatment.name}
-                </span>
-                <span className={`treatment-description ${active ? 'treatment-description-active' : ''}`}>{treatment.indication}</span>
-              </span>
-              <span className="shrink-0 pt-1 text-right text-[0.7rem] font-semibold tracking-[0.08em] text-muted">{treatment.duration}</span>
-            </button>
-          )
-        })}
-      </div>
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={treatment.name}
+        className="treatment-image"
+        role={decorative ? undefined : 'img'}
+        aria-hidden={decorative ? true : undefined}
+        aria-label={decorative ? undefined : treatment.imageDescription}
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={reduceMotion ? undefined : { opacity: 0 }}
+        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          backgroundImage: `url(${treatment.sheet})`,
+          backgroundPosition: `${treatment.panel * 50}% center`,
+        }}
+      />
+    </AnimatePresence>
+  )
+}
 
-      <div className="lg:sticky lg:top-8 lg:h-fit">
-        <div
-          className="treatment-image"
-          role="img"
-          aria-label={selected.imageDescription}
-          style={{
-            backgroundImage: `url(${selected.sheet})`,
-            backgroundPosition: `${selected.panel * 50}% center`,
-          }}
-        />
-        <div className="mt-4 flex items-start justify-between gap-6 border-t border-gold/55 pt-3 text-xs leading-relaxed text-muted">
-          <p>Imagem ilustrativa do contexto clínico.</p>
-          <p className="max-w-48 text-right">A indicação é definida somente após avaliação presencial.</p>
-        </div>
-      </div>
+export function TreatmentGallery() {
+  const [selectedName, setSelectedName] = useState(treatments[0].name)
+  const selectedIndex = treatments.findIndex((treatment) => treatment.name === selectedName)
+
+  return (
+    <div className="mt-10">
+      <Tabs
+        value={selectedName}
+        onValueChange={setSelectedName}
+        orientation="vertical"
+        activationMode="automatic"
+        className="hidden lg:grid lg:grid-cols-[minmax(0,1.06fr)_minmax(320px,0.72fr)] lg:gap-16"
+      >
+        <TabsList variant="line" aria-label="Tratamentos disponíveis" className="h-auto w-full flex-col items-stretch justify-start p-0">
+          {treatments.map((treatment) => {
+            const active = treatment.name === selectedName
+            return (
+              <TabsTrigger className="treatment-tab" value={treatment.name} key={treatment.name}>
+                {active ? <motion.span className="treatment-active-line" layoutId="treatment-active-line" /> : null}
+                <span className="min-w-0">
+                  <span className="treatment-name">{treatment.name}</span>
+                  <span className="treatment-description">{treatment.indication}</span>
+                </span>
+                <span className="treatment-duration">{treatment.duration}</span>
+              </TabsTrigger>
+            )
+          })}
+        </TabsList>
+
+        <TabsContent value={selectedName} className="sticky top-8 h-fit">
+          <TreatmentImage index={selectedIndex} />
+          <div className="treatment-caption">
+            <p>Imagem ilustrativa do contexto clínico.</p>
+            <p>A indicação é definida somente após avaliação presencial.</p>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <Accordion
+        type="single"
+        collapsible
+        value={selectedName}
+        onValueChange={(value) => value && setSelectedName(value)}
+        className="lg:hidden"
+      >
+        {treatments.map((treatment, index) => (
+          <AccordionItem value={treatment.name} key={treatment.name}>
+            <AccordionTrigger className="treatment-accordion-trigger">
+              <span>
+                <span className="treatment-name">{treatment.name}</span>
+                <span className="treatment-duration mt-1 block text-left">{treatment.duration}</span>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="pb-7">
+              <p className="mb-5 text-sm leading-6 text-muted-foreground">{treatment.indication}</p>
+              <TreatmentImage index={index} decorative />
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   )
 }

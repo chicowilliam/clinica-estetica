@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { MenuIcon, XIcon } from 'lucide-react'
 
-import { CloseIcon, MenuIcon } from './icons'
+import { Button } from '@/components/ui/button'
 
 const links = [
   ['A clínica', '#clinica'],
@@ -18,7 +19,7 @@ export function Header() {
       <div className="page-grid flex min-h-20 items-center justify-between gap-4 py-3 md:min-h-24">
         <a className="font-display text-[1.28rem] leading-none font-semibold tracking-[-0.025em]" href="#inicio" aria-label="Clínica Olívia Salles, início">
           Olívia Salles
-          <span className="mt-1 block font-sans text-[0.58rem] font-medium tracking-[0.16em] text-muted">CLÍNICA DE ESTÉTICA</span>
+          <span className="mt-1 block font-sans text-[0.58rem] font-medium tracking-[0.16em] text-muted-foreground">CLÍNICA DE ESTÉTICA</span>
         </a>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegação principal">
@@ -30,19 +31,21 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <a className="button-primary hidden sm:inline-flex" href="#agendamento">
-            Agendar avaliação
-          </a>
-          <button
-            className="icon-button lg:hidden"
+          <Button asChild className="hidden sm:inline-flex">
+            <a href="#agendamento">Agendar avaliação</a>
+          </Button>
+          <Button
+            className="lg:hidden"
+            variant="outline"
+            size="icon-lg"
             type="button"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? 'Fechar menu' : 'Abrir menu'}
             onClick={() => setOpen((value) => !value)}
           >
-            {open ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
-          </button>
+            {open ? <XIcon /> : <MenuIcon />}
+          </Button>
         </div>
       </div>
 
@@ -53,9 +56,9 @@ export function Header() {
               {label}
             </a>
           ))}
-          <a className="button-primary mt-4 w-full sm:hidden" href="#agendamento" onClick={() => setOpen(false)}>
-            Agendar avaliação
-          </a>
+          <Button asChild className="mt-4 w-full sm:hidden">
+            <a href="#agendamento" onClick={() => setOpen(false)}>Agendar avaliação</a>
+          </Button>
         </nav>
       ) : null}
     </header>
