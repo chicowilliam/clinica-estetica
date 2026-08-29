@@ -72,8 +72,7 @@ function DialogContent({
               className="absolute top-2 right-2"
               size="icon-sm"
             >
-              <XIcon
-              />
+              <XIcon strokeWidth={1.35} />
               <span className="sr-only">Fechar</span>
             </Button>
           </DialogPrimitive.Close>

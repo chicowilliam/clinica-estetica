@@ -1,9 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowRightIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
-import { Button } from '@/components/ui/button'
+import { Button, ButtonArrow } from '@/components/ui/button'
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
@@ -175,7 +174,7 @@ export function BookingForm() {
         <Button className="mt-8 w-full sm:w-auto" type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
           {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
           Preparar pedido no WhatsApp
-          {!isSubmitting ? <ArrowRightIcon data-icon="inline-end" /> : null}
+          {!isSubmitting ? <ButtonArrow /> : null}
         </Button>
         <FieldDescription className="mt-3 max-w-xl">
           O envio é concluído no WhatsApp. A equipe confirma a disponibilidade; este formulário não reserva o horário automaticamente.
@@ -193,7 +192,7 @@ export function BookingForm() {
         <p className="mt-5 text-sm leading-7 text-muted-foreground">
           Envie sua dúvida ou conte brevemente o que deseja tratar. A indicação de procedimento só acontece depois da avaliação.
         </p>
-        <Button asChild variant="outline" className="mt-7">
+        <Button asChild variant="secondary" className="mt-7">
           <a href={directMessage} target="_blank" rel="noreferrer">
             <WhatsAppIcon data-icon="inline-start" />
             Abrir WhatsApp

@@ -1,22 +1,27 @@
 import useEmblaCarousel from 'embla-carousel-react'
-import { QuoteIcon } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { testimonials } from '@/content'
-import { cn } from '@/lib/utils'
+import { fadeUp } from '@/lib/motion'
 
 export function Testimonials() {
+  const reduceMotion = useReducedMotion()
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
-    breakpoints: { '(min-width: 48rem)': { active: false } },
   })
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(true)
 
   const onSelect = useCallback(() => {
-    if (emblaApi) setSelectedIndex(emblaApi.selectedScrollSnap())
+    if (!emblaApi) return
+    setSelectedIndex(emblaApi.selectedScrollSnap())
+    setCanScrollPrev(emblaApi.canScrollPrev())
+    setCanScrollNext(emblaApi.canScrollNext())
   }, [emblaApi])
 
   useEffect(() => {
@@ -31,46 +36,43 @@ export function Testimonials() {
   }, [emblaApi, onSelect])
 
   return (
-    <div className="mt-12">
+    <motion.div
+      className="testimonial-carousel"
+      role="region"
+      aria-label="Relatos de pacientes"
+      variants={fadeUp}
+      initial={reduceMotion ? false : 'hidden'}
+      whileInView={reduceMotion ? undefined : 'visible'}
+      viewport={{ once: true, amount: 0.18 }}
+    >
       <div className="testimonial-viewport" ref={emblaRef}>
         <div className="testimonial-track">
-          {testimonials.map((testimonial) => (
-            <div className="testimonial-slide" key={testimonial.patient}>
-              <Card className="h-full">
-                <CardHeader>
-                  <QuoteIcon className="testimonial-quote" strokeWidth={1.2} aria-hidden="true" />
-                </CardHeader>
-                <CardContent>
-                  <blockquote>
-                    <p>“{testimonial.quote}”</p>
-                  </blockquote>
-                </CardContent>
-                <CardFooter>
-                  <cite>{testimonial.patient}</cite>
-                  <span>{testimonial.context}</span>
-                </CardFooter>
-              </Card>
-            </div>
+          {testimonials.map((testimonial, index) => (
+            <article className="testimonial-slide" aria-label={`Relato ${index + 1} de ${testimonials.length}`} key={testimonial.patient}>
+              <span className="testimonial-mark" aria-hidden="true">“</span>
+              <blockquote>
+                <p><em>{testimonial.highlight}</em> {testimonial.quote}</p>
+              </blockquote>
+              <footer>
+                <cite>{testimonial.patient}</cite>
+                <span>{testimonial.context}</span>
+              </footer>
+            </article>
           ))}
         </div>
       </div>
 
-      <div className="mt-5 flex justify-center gap-2 md:hidden" aria-label="Selecionar depoimento">
-        {testimonials.map((testimonial, index) => (
-          <Button
-            key={testimonial.patient}
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            className="testimonial-dot"
-            aria-label={`Mostrar depoimento ${index + 1} de ${testimonials.length}`}
-            aria-current={index === selectedIndex ? 'true' : undefined}
-            onClick={() => emblaApi?.scrollTo(index)}
-          >
-            <span className={cn('testimonial-dot-line', index === selectedIndex && 'testimonial-dot-line-active')} />
+      <div className="testimonial-controls">
+        <p aria-live="polite"><span>{String(selectedIndex + 1).padStart(2, '0')}</span> / {String(testimonials.length).padStart(2, '0')}</p>
+        <div className="flex gap-2">
+          <Button type="button" variant="control" size="icon" aria-label="Depoimento anterior" disabled={!canScrollPrev} onClick={() => emblaApi?.scrollPrev()}>
+            <ArrowLeftIcon strokeWidth={1.35} aria-hidden="true" />
           </Button>
-        ))}
+          <Button type="button" variant="control" size="icon" aria-label="Próximo depoimento" disabled={!canScrollNext} onClick={() => emblaApi?.scrollNext()}>
+            <ArrowRightIcon strokeWidth={1.35} aria-hidden="true" />
+          </Button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

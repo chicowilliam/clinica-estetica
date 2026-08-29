@@ -30,7 +30,7 @@ export function LocationMap() {
         </g>
         <g transform="translate(424 235)">
           <circle r="32" fill="var(--card)" stroke="var(--gold)" strokeWidth="2" />
-          <MapPinIcon x="-14" y="-14" width="28" height="28" color="var(--primary)" strokeWidth="1.8" aria-hidden="true" />
+          <MapPinIcon x="-14" y="-14" width="28" height="28" color="var(--primary)" strokeWidth="1.35" aria-hidden="true" />
         </g>
         <g transform="translate(474 225)">
           <rect width="202" height="54" fill="var(--card)" stroke="var(--gold)" />

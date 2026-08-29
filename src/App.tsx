@@ -1,16 +1,15 @@
-import { ArrowUpRightIcon } from 'lucide-react'
-
 import { BeforeAfter } from '@/components/BeforeAfter'
 import { BookingForm } from '@/components/BookingForm'
 import { CareValues } from '@/components/CareValues'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
 import { LocationMap } from '@/components/LocationMap'
+import { Reveal } from '@/components/Reveal'
 import { TeamPortrait } from '@/components/TeamPortrait'
 import { Testimonials } from '@/components/Testimonials'
 import { TreatmentGallery } from '@/components/TreatmentGallery'
 import { WhatsAppIcon } from '@/components/icons'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonArrow } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { buildWhatsAppUrl } from '@/lib/booking'
 
@@ -33,7 +32,7 @@ function App() {
       <main>
         <Hero />
 
-        <section id="clinica" className="section-cream section-curve scroll-mt-6" aria-labelledby="clinic-title">
+        <section id="clinica" className="section-cream scroll-mt-6" aria-labelledby="clinic-title">
           <div className="page-grid">
             <div className="grid gap-12 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.75fr)] lg:items-end lg:gap-18">
               <figure>
@@ -76,7 +75,7 @@ function App() {
         </section>
 
         <section id="resultados" className="section-cream section-curve scroll-mt-6" aria-labelledby="results-title">
-          <div className="page-grid">
+          <Reveal className="page-grid">
             <div className="grid gap-7 lg:grid-cols-[0.7fr_1fr] lg:items-end">
               <div>
                 <p className="eyebrow">Antes e depois</p>
@@ -94,7 +93,7 @@ function App() {
               <p>Controle ilustrativo para esta peça de portfólio.</p>
               <p className="max-w-2xl sm:text-right">Imagens e caso são fictícios. Nenhum resultado é garantido; a indicação depende de avaliação profissional.</p>
             </div>
-          </div>
+          </Reveal>
         </section>
 
         <section id="equipe" className="section-pink scroll-mt-6" aria-labelledby="team-title">
@@ -133,7 +132,7 @@ function App() {
         </section>
 
         <section id="agendamento" className="section-pink scroll-mt-6" aria-labelledby="booking-title">
-          <div className="page-grid">
+          <Reveal className="page-grid">
             <div className="grid gap-6 md:grid-cols-[0.62fr_1fr] md:items-end">
               <p className="eyebrow">Agendamento</p>
               <div>
@@ -144,11 +143,11 @@ function App() {
             <div className="elevated-panel mt-12">
               <BookingForm />
             </div>
-          </div>
+          </Reveal>
         </section>
 
         <section id="contato" className="section-cream section-curve scroll-mt-6" aria-labelledby="contact-title">
-          <div className="page-grid grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(380px,1fr)] lg:items-start lg:gap-20">
+          <Reveal className="page-grid grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(380px,1fr)] lg:items-start lg:gap-20">
             <div>
               <p className="eyebrow">Localização e contato</p>
               <h2 id="contact-title" className="section-title mt-6">Atendimento com hora marcada no Jardim Paulista.</h2>
@@ -156,10 +155,10 @@ function App() {
                 <p className="font-display text-2xl leading-tight">Alameda das Acácias, 184 · sala 31</p>
                 <p className="mt-2 text-sm text-muted-foreground">Jardim Paulista · São Paulo — SP</p>
               </address>
-              <Button asChild variant="outline" className="mt-7">
+              <Button asChild variant="secondary" className="mt-7">
                 <a href="https://www.google.com/maps/search/?api=1&query=Jardim+Paulista+S%C3%A3o+Paulo" target="_blank" rel="noreferrer">
                   Abrir localização no mapa
-                  <ArrowUpRightIcon data-icon="inline-end" />
+                  <ButtonArrow direction="up-right" />
                 </a>
               </Button>
 
@@ -178,7 +177,7 @@ function App() {
               <LocationMap />
               <p className="mt-4 text-xs leading-5 text-muted-foreground">Endereço, telefone e perfis são fictícios e aparecem apenas para demonstrar a experiência completa do site.</p>
             </div>
-          </div>
+          </Reveal>
         </section>
       </main>
 
@@ -189,10 +188,12 @@ function App() {
         </div>
       </footer>
 
-      <a className="whatsapp-dock" href={directWhatsAppUrl} target="_blank" rel="noreferrer" aria-label="Conversar com a clínica pelo WhatsApp">
-        <WhatsAppIcon />
-        <span>WhatsApp</span>
-      </a>
+      <Button asChild variant="control" className="whatsapp-dock">
+        <a href={directWhatsAppUrl} target="_blank" rel="noreferrer" aria-label="Conversar com a clínica pelo WhatsApp">
+          <WhatsAppIcon />
+          <span>WhatsApp</span>
+        </a>
+      </Button>
     </div>
   )
 }

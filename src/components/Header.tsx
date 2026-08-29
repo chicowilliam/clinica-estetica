@@ -36,7 +36,7 @@ export function Header() {
           </Button>
           <Button
             className="lg:hidden"
-            variant="outline"
+            variant="control"
             size="icon-lg"
             type="button"
             aria-expanded={open}
@@ -44,7 +44,7 @@ export function Header() {
             aria-label={open ? 'Fechar menu' : 'Abrir menu'}
             onClick={() => setOpen((value) => !value)}
           >
-            {open ? <XIcon /> : <MenuIcon />}
+            {open ? <XIcon strokeWidth={1.35} /> : <MenuIcon strokeWidth={1.35} />}
           </Button>
         </div>
       </div>

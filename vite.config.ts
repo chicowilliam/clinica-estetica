@@ -7,21 +7,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
+        onlyExplicitManualChunks: true,
         manualChunks: {
           'motion-vendor': ['framer-motion'],
           'form-vendor': ['react-hook-form', 'zod', '@hookform/resolvers'],
-          'ui-vendor': [
-            'lucide-react',
-            'embla-carousel-react',
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-label',
-            '@radix-ui/react-select',
-            '@radix-ui/react-separator',
-            '@radix-ui/react-slot',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-tooltip',
-          ],
         },
       },
     },

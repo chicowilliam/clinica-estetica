@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { fireEvent, screen, waitFor } from '@testing-library/dom'
+import { fireEvent, screen, waitFor, within } from '@testing-library/dom'
 import { cleanup, render } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -85,5 +85,45 @@ describe('estrutura editorial', () => {
     render(<App />)
 
     expect(screen.getByRole('img', { name: /mapa ilustrado da região/i })).toBeInTheDocument()
+  })
+})
+
+describe('linguagem visual da clínica', () => {
+  it('apresenta o plano de cuidado como uma sequência editorial, sem cards repetidos', () => {
+    render(<App />)
+
+    const sequence = screen.getByRole('list', { name: 'Sequência de atendimento' })
+    expect(within(sequence).getAllByRole('listitem')).toHaveLength(3)
+    expect(within(sequence).getByText('01')).toBeInTheDocument()
+    expect(within(sequence).getByText('02')).toBeInTheDocument()
+    expect(within(sequence).getByText('03')).toBeInTheDocument()
+    expect(sequence.querySelector('[data-slot="card"]')).not.toBeInTheDocument()
+  })
+
+  it('mantém os relatos em um carrossel editorial com navegação por setas', () => {
+    render(<App />)
+
+    const carousel = screen.getByRole('region', { name: 'Relatos de pacientes' })
+    expect(within(carousel).getAllByRole('article')).toHaveLength(4)
+    expect(within(carousel).getByRole('button', { name: 'Depoimento anterior' })).toBeInTheDocument()
+    expect(within(carousel).getByRole('button', { name: 'Próximo depoimento' })).toBeInTheDocument()
+    expect(carousel.querySelector('[data-slot="card"]')).not.toBeInTheDocument()
+  })
+
+  it('expõe os dois momentos editoriais controlados pelo scroll', () => {
+    render(<App />)
+
+    expect(document.querySelector('[data-gsap-moment="hero-divider"]')).toBeInTheDocument()
+    expect(document.querySelector('[data-gsap-moment="treatment-pin"]')).toBeInTheDocument()
+  })
+
+  it('diferencia a ação principal da secundária e prepara a seta para o hover', () => {
+    render(<App />)
+
+    const primary = screen.getByRole('link', { name: 'Solicitar avaliação' })
+    const secondary = screen.getByRole('link', { name: 'Ver tratamentos' })
+    expect(primary).toHaveAttribute('data-variant', 'default')
+    expect(primary.querySelector('[data-button-arrow]')).toBeInTheDocument()
+    expect(secondary).toHaveAttribute('data-variant', 'secondary')
   })
 })

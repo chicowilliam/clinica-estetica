@@ -17,8 +17,8 @@ export function BeforeAfter() {
       <span className="comparison-label comparison-label-after">Depois</span>
       <div className="comparison-handle" style={{ left: `${position}%` }} aria-hidden="true">
         <span>
-          <ChevronLeftIcon />
-          <ChevronRightIcon />
+          <ChevronLeftIcon strokeWidth={1.35} />
+          <ChevronRightIcon strokeWidth={1.35} />
         </span>
       </div>
       <input

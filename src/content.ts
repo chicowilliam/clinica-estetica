@@ -60,26 +60,26 @@ export const treatments: Treatment[] = [
 
 export const testimonials = [
   {
-    quote:
-      'Na primeira consulta, a Marina descartou dois procedimentos que eu achava necessários e explicou o motivo. Começamos com um protocolo mais simples e minha pele respondeu muito bem.',
+    highlight: 'Na primeira consulta, a Marina descartou dois procedimentos que eu achava necessários.',
+    quote: 'Ela explicou o motivo e começamos com um protocolo mais simples. Minha pele respondeu muito bem.',
     patient: 'L. M.',
     context: 'Limpeza de pele e peeling · fev. 2026',
   },
   {
-    quote:
-      'Gostei de saber o que seria feito em cada etapa e como cuidar da pele nos dias seguintes. O acompanhamento depois da sessão fez diferença.',
+    highlight: 'Eu soube o que seria feito em cada etapa antes de começarmos.',
+    quote: 'As orientações para os dias seguintes foram claras, e o acompanhamento depois da sessão fez diferença.',
     patient: 'C. R.',
     context: 'Microagulhamento · nov. 2025',
   },
   {
-    quote:
-      'A drenagem foi adaptada ao meu pós-operatório e não seguiu um protocolo pronto. O atendimento foi cuidadoso e sem pressa.',
+    highlight: 'A drenagem foi adaptada ao meu pós-operatório; não seguiu um protocolo pronto.',
+    quote: 'O atendimento foi cuidadoso, explicou os limites daquela fase e aconteceu sem pressa.',
     patient: 'A. F.',
     context: 'Drenagem linfática · jan. 2026',
   },
   {
-    quote:
-      'Eu tinha receio de ficar com um resultado marcado. A avaliação foi objetiva, o plano foi conservador e respeitou o que eu pedi.',
+    highlight: 'Eu tinha receio de ficar com um resultado marcado.',
+    quote: 'A avaliação foi objetiva, o plano foi conservador e respeitou exatamente o que eu pedi.',
     patient: 'B. N.',
     context: 'Harmonização facial · set. 2025',
   },

@@ -24,7 +24,8 @@
   --ring: #B3667A;
   --gold: #C7A669;
   --radius: 0.25rem;
-  --shadow-card: 0 18px 48px color-mix(in srgb, #3A2226 9%, transparent);
+  --shadow-card: 0 18px 48px color-mix(in srgb, #B3667A 17%, transparent);
+  --section-space: clamp(5.5rem, 10vw, 9rem);
 }
 
 @theme inline {
@@ -120,13 +121,28 @@
   }
 
   .hero-section {
+    position: relative;
+    isolation: isolate;
     padding-block: clamp(2.5rem, 7vw, 7.25rem) clamp(5.5rem, 11vw, 9.5rem);
+  }
+
+  .hero-scroll-curve {
+    position: absolute;
+    z-index: 2;
+    right: -5%;
+    bottom: -1px;
+    left: -5%;
+    height: clamp(1.8rem, 4vw, 3.8rem);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    background: var(--card);
+    transform-origin: center bottom;
+    pointer-events: none;
   }
 
   .section-pink,
   .section-cream {
     position: relative;
-    padding-block: clamp(5rem, 10vw, 9rem);
+    padding-block: var(--section-space);
   }
 
   .section-pink {
@@ -248,6 +264,12 @@
     aspect-ratio: 4 / 5;
     object-fit: cover;
     object-position: 50% 44%;
+    filter: sepia(0.08) saturate(0.84) contrast(0.97) hue-rotate(315deg);
+  }
+
+  #clinica figure > img,
+  .team-portrait-frame img {
+    filter: sepia(0.08) saturate(0.84) contrast(0.97) hue-rotate(315deg);
   }
 
   .hero-caption {
@@ -258,7 +280,7 @@
     padding: 1rem 1.15rem;
     border-top: 1px solid var(--gold);
     background: var(--card);
-    box-shadow: 0 12px 30px color-mix(in srgb, var(--foreground) 7%, transparent);
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--primary) 13%, transparent);
   }
 
   .hero-caption span,
@@ -286,35 +308,48 @@
     margin-top: 0.2rem;
   }
 
-  .care-card {
-    min-width: 0;
-    transition: transform 160ms var(--ease-clinic);
+  .care-sequence {
+    width: min(100%, 66rem);
+    margin: clamp(3.5rem, 7vw, 6.5rem) 0 0 auto;
+    padding: 0;
+    border-top: 1px solid var(--border);
+    list-style: none;
   }
 
-  .care-card [data-slot="card"] {
-    min-height: 15rem;
+  .care-sequence-item {
+    display: grid;
+    grid-template-columns: 4.25rem minmax(13rem, 0.82fr) minmax(0, 1.18fr);
+    align-items: baseline;
+    gap: clamp(1.25rem, 3vw, 3rem);
+    padding-block: clamp(1.8rem, 3.5vw, 2.8rem);
+    border-bottom: 1px solid var(--border);
   }
 
-  .care-card [data-slot="card-header"] {
-    gap: 1.4rem;
-  }
-
-  .care-card [data-slot="card-title"] {
-    max-width: 18rem;
-    font-size: 1rem;
-    line-height: 1.35;
-  }
-
-  .care-card [data-slot="card-content"] {
-    color: var(--muted-foreground);
-    font-size: 0.88rem;
-    line-height: 1.65;
-  }
-
-  .value-icon {
-    width: 1.75rem;
-    height: 1.75rem;
+  .care-sequence-number {
     color: var(--primary);
+    font-family: "Onest", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+  }
+
+  .care-sequence-item h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(1.55rem, 2.6vw, 2.25rem);
+    font-weight: 520;
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+  }
+
+  .care-sequence-item p {
+    max-width: 38rem;
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+    line-height: 1.72;
+  }
+
+  .treatment-pin-stage {
+    margin-top: clamp(2.75rem, 5vw, 4.5rem);
   }
 
   .treatment-tab {
@@ -382,12 +417,21 @@
     letter-spacing: 0.06em;
   }
 
-  .treatment-image {
+  .treatment-image-stage {
+    position: relative;
     aspect-ratio: 4 / 5;
+    overflow: hidden;
     background-color: var(--card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .treatment-image {
+    position: absolute;
+    inset: 0;
     background-repeat: no-repeat;
     background-size: 300% 100%;
-    box-shadow: var(--shadow-card);
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+    background-blend-mode: soft-light;
   }
 
   .treatment-caption {
@@ -429,6 +473,8 @@
     background-image: url('/images/comparativo-pele.jpg');
     background-repeat: no-repeat;
     background-size: 200% 100%;
+    background-color: color-mix(in srgb, var(--primary) 9%, transparent);
+    background-blend-mode: soft-light;
   }
 
   .comparison-before {
@@ -462,7 +508,7 @@
     border: 1px solid var(--gold);
     border-radius: 50%;
     background: var(--card);
-    box-shadow: 0 10px 26px color-mix(in srgb, var(--foreground) 16%, transparent);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--primary) 22%, transparent);
     color: var(--foreground);
     transform: translate(-50%, -50%);
     transition: transform 140ms var(--ease-clinic), box-shadow 180ms ease;
@@ -476,7 +522,7 @@
 
   .comparison[data-dragging="true"] .comparison-handle span {
     transform: translate(-50%, -50%) scale(0.94);
-    box-shadow: 0 6px 16px color-mix(in srgb, var(--foreground) 18%, transparent);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--primary) 24%, transparent);
   }
 
   .comparison-range {
@@ -559,41 +605,81 @@
     line-height: 1.6;
   }
 
+  .testimonial-carousel {
+    margin-top: clamp(3.5rem, 7vw, 6rem);
+  }
+
   .testimonial-viewport {
     overflow: hidden;
+    cursor: grab;
+  }
+
+  .testimonial-viewport:active {
+    cursor: grabbing;
   }
 
   .testimonial-track {
     display: flex;
-    gap: 1rem;
+    gap: clamp(1.25rem, 3vw, 3rem);
+    touch-action: pan-y pinch-zoom;
   }
 
   .testimonial-slide {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
-    flex: 0 0 88%;
+    min-height: clamp(34rem, 58vw, 40rem);
+    flex: 0 0 91%;
+    overflow: hidden;
+    padding: clamp(2rem, 6vw, 5rem);
+    border-top: 1px solid var(--gold);
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--background) 42%, transparent);
   }
 
-  .testimonial-slide [data-slot="card"] {
-    min-height: 27rem;
+  .testimonial-mark {
+    position: absolute;
+    top: -2.1rem;
+    left: clamp(0.4rem, 2vw, 1.75rem);
+    color: var(--primary);
+    font-family: "Fraunces", Georgia, serif;
+    font-size: clamp(11rem, 24vw, 20rem);
+    font-weight: 500;
+    line-height: 1;
+    opacity: 0.085;
+    pointer-events: none;
   }
 
-  .testimonial-quote {
-    width: 2rem;
-    height: 2rem;
-    color: var(--gold);
+  .testimonial-slide blockquote {
+    position: relative;
+    z-index: 1;
+    max-width: 28ch;
   }
 
   .testimonial-slide blockquote p {
     font-family: "Fraunces", Georgia, serif;
-    font-size: clamp(1.28rem, 2.1vw, 1.8rem);
-    line-height: 1.38;
-    letter-spacing: -0.018em;
+    font-size: clamp(1.65rem, 2.8vw, 2.8rem);
+    font-weight: 470;
+    line-height: 1.14;
+    letter-spacing: -0.035em;
   }
 
-  .testimonial-slide [data-slot="card-footer"] {
-    margin-top: auto;
+  .testimonial-slide blockquote em {
+    color: var(--primary);
+    font-weight: 430;
+  }
+
+  .testimonial-slide footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
     justify-content: space-between;
     gap: 1.5rem;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
     color: var(--muted-foreground);
     font-size: 0.72rem;
     line-height: 1.45;
@@ -605,26 +691,28 @@
     font-weight: 650;
   }
 
-  .testimonial-slide [data-slot="card-footer"] span {
+  .testimonial-slide footer span {
     max-width: 13rem;
     text-align: right;
   }
 
-  .testimonial-dot {
-    padding: 0 !important;
-    background: transparent !important;
+  .testimonial-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
   }
 
-  .testimonial-dot-line {
-    width: 1rem;
-    height: 1px;
-    background: var(--gold);
-    transition: width 180ms var(--ease-clinic), background-color 180ms ease;
+  .testimonial-controls > p {
+    color: var(--muted-foreground);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
   }
 
-  .testimonial-dot-line-active {
-    width: 1.65rem;
-    background: var(--primary);
+  .testimonial-controls > p span {
+    color: var(--foreground);
   }
 
   .elevated-panel {
@@ -744,12 +832,12 @@
     border: 1px solid var(--gold);
     border-radius: 2px;
     background: var(--card);
-    box-shadow: 0 0.7rem 2rem color-mix(in srgb, var(--foreground) 12%, transparent);
+    box-shadow: 0 0.7rem 2rem color-mix(in srgb, var(--primary) 18%, transparent);
     color: var(--foreground);
     font-size: 0.7rem;
     font-weight: 650;
     text-decoration: none;
-    transition: background-color 160ms var(--ease-clinic), color 160ms var(--ease-clinic), transform 160ms var(--ease-clinic);
+    transition: background-color 160ms var(--ease-clinic), color 160ms var(--ease-clinic), border-color 160ms var(--ease-clinic), box-shadow 160ms var(--ease-clinic);
   }
 
   .whatsapp-dock svg {
@@ -758,20 +846,17 @@
   }
 
   .whatsapp-dock:hover {
-    background: var(--foreground);
-    color: var(--card);
-    transform: translateY(-2px);
+    border-color: var(--primary);
+    background: var(--card);
+    color: var(--primary);
+    box-shadow: 0 0.9rem 2.4rem color-mix(in srgb, var(--primary) 24%, transparent);
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .care-card:hover {
-    transform: translateY(-4px);
-  }
-
   .comparison:hover .comparison-handle span {
     transform: translate(-50%, -50%) scale(1.04);
-    box-shadow: 0 12px 32px color-mix(in srgb, var(--foreground) 18%, transparent);
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--primary) 24%, transparent);
   }
 
   .comparison[data-dragging="true"] .comparison-handle span {
@@ -807,19 +892,8 @@
     border-left: 1px solid var(--border);
   }
 
-  .testimonial-viewport {
-    overflow: visible;
-  }
-
-  .testimonial-track {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-    transform: none !important;
-  }
-
   .testimonial-slide {
-    min-width: 0;
+    flex-basis: 68%;
   }
 }
 
@@ -839,6 +913,26 @@
 
   .hero-image-wrap {
     margin-left: 1rem;
+  }
+
+  .care-sequence-item {
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.9rem 1rem;
+  }
+
+  .care-sequence-item p {
+    grid-column: 2;
+  }
+
+  .testimonial-slide footer {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .testimonial-slide footer span {
+    max-width: none;
+    text-align: left;
   }
 
   .comparison {
