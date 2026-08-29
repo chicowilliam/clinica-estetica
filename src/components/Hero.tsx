@@ -71,22 +71,22 @@ export function Hero() {
   return (
     <section ref={sectionRef} className="hero-section" aria-labelledby="hero-title">
       <motion.div
-        className="page-grid grid items-end gap-10 lg:grid-cols-[minmax(0,0.79fr)_minmax(440px,1.1fr)] lg:gap-14"
+        className="page-grid grid items-end gap-10 lg:grid-cols-[minmax(0,0.79fr)_minmax(440px,1.1fr)] lg:gap-16"
         variants={staggerList}
         initial={reduceMotion ? false : 'hidden'}
         animate="visible"
       >
-        <div className="pb-1 lg:pb-12">
+        <div className="lg:pb-10">
           <motion.p className="eyebrow" variants={fadeUp}>
             Estética facial e corporal · São Paulo
           </motion.p>
-          <motion.h1 id="hero-title" className="display-title mt-7 max-w-[13ch]" variants={fadeUp}>
+          <motion.h1 id="hero-title" className="display-title mt-6 max-w-[13ch]" variants={fadeUp}>
             Antes de indicar um procedimento, olhamos sua pele <em>de perto.</em>
           </motion.h1>
-          <motion.p className="body-lead mt-8 max-w-lg" variants={fadeUp}>
+          <motion.p className="body-lead mt-6 max-w-lg" variants={fadeUp}>
             Avaliação individual, protocolos explicados com clareza e acompanhamento depois de cada sessão.
           </motion.p>
-          <motion.div className="mt-8 flex flex-wrap items-center gap-3" variants={fadeUp}>
+          <motion.div className="mt-6 flex flex-wrap items-center gap-2" variants={fadeUp}>
             <Button asChild>
               <a href="#agendamento">
                 Solicitar avaliação
@@ -100,7 +100,7 @@ export function Hero() {
         </div>
 
         <motion.figure className="hero-figure" variants={fadeUp}>
-          <div className="hero-image-wrap">
+          <div className="hero-image-wrap photo-frame" data-photo-frame="hero">
             <img
               src="/images/hero-marina.jpg"
               alt="Marina Avelar, biomédica esteta responsável pela clínica"

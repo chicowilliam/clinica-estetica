@@ -68,7 +68,7 @@ export function BookingForm() {
   }, import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined)
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.58fr)] lg:gap-18">
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.58fr)] lg:gap-16">
       <form className="booking-form" noValidate onSubmit={submit}>
         <FieldGroup className="sm:grid sm:grid-cols-2">
           <Field className="sm:col-span-2" data-invalid={Boolean(errors.name)}>
@@ -171,12 +171,12 @@ export function BookingForm() {
           </Field>
         </FieldGroup>
 
-        <Button className="mt-8 w-full sm:w-auto" type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
+        <Button className="mt-6 w-full sm:w-auto" type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
           {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
           Preparar pedido no WhatsApp
           {!isSubmitting ? <ButtonArrow /> : null}
         </Button>
-        <FieldDescription className="mt-3 max-w-xl">
+        <FieldDescription className="mt-2 max-w-xl">
           O envio é concluído no WhatsApp. A equipe confirma a disponibilidade; este formulário não reserva o horário automaticamente.
         </FieldDescription>
         {success ? (
@@ -188,11 +188,11 @@ export function BookingForm() {
 
       <aside className="booking-aside">
         <p className="eyebrow">Prefere conversar primeiro?</p>
-        <h3 className="subheading mt-5">A equipe responde pelo WhatsApp durante o horário de atendimento.</h3>
-        <p className="mt-5 text-sm leading-7 text-muted-foreground">
+        <h3 className="subheading mt-4">A equipe responde pelo WhatsApp durante o horário de atendimento.</h3>
+        <p className="mt-4 text-sm leading-7 text-muted-foreground">
           Envie sua dúvida ou conte brevemente o que deseja tratar. A indicação de procedimento só acontece depois da avaliação.
         </p>
-        <Button asChild variant="secondary" className="mt-7">
+        <Button asChild variant="secondary" className="mt-6">
           <a href={directMessage} target="_blank" rel="noreferrer">
             <WhatsAppIcon data-icon="inline-start" />
             Abrir WhatsApp

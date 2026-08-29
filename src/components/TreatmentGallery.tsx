@@ -1,5 +1,5 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import {
   Accordion,
@@ -11,13 +11,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { treatments } from '@/content'
 import { clinicEase } from '@/lib/motion'
 
+const treatmentIndicatorHeight = 56
+
 function TreatmentImage({ index, decorative = false }: { index: number; decorative?: boolean }) {
   const treatment = treatments[index]
   const reduceMotion = useReducedMotion()
 
   return (
     <div
-      className="treatment-image-stage"
+      className="treatment-image-stage photo-frame"
+      data-photo-frame="treatment"
       role={decorative ? undefined : 'img'}
       aria-hidden={decorative ? true : undefined}
       aria-label={decorative ? undefined : treatment.imageDescription}
@@ -44,8 +47,11 @@ function TreatmentImage({ index, decorative = false }: { index: number; decorati
 export function TreatmentGallery() {
   const reduceMotion = useReducedMotion()
   const stageRef = useRef<HTMLDivElement>(null)
+  const tabsListRef = useRef<HTMLDivElement>(null)
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
   const selectedNameRef = useRef(treatments[0].name)
   const [selectedName, setSelectedName] = useState(treatments[0].name)
+  const [indicatorY, setIndicatorY] = useState(0)
   const selectedIndex = treatments.findIndex((treatment) => treatment.name === selectedName)
 
   const selectTreatment = useCallback((name: string) => {
@@ -53,6 +59,28 @@ export function TreatmentGallery() {
     selectedNameRef.current = name
     setSelectedName(name)
   }, [])
+
+  const updateIndicatorPosition = useCallback(() => {
+    const selectedTab = tabRefs.current[selectedIndex]
+    if (!selectedTab) return
+    setIndicatorY(selectedTab.offsetTop + Math.max(0, (selectedTab.offsetHeight - treatmentIndicatorHeight) / 2))
+  }, [selectedIndex])
+
+  useLayoutEffect(() => {
+    const firstTab = tabRefs.current[0]
+    if (!firstTab) return
+    setIndicatorY(firstTab.offsetTop + Math.max(0, (firstTab.offsetHeight - treatmentIndicatorHeight) / 2))
+  }, [])
+
+  useEffect(updateIndicatorPosition, [updateIndicatorPosition])
+
+  useEffect(() => {
+    const list = tabsListRef.current
+    if (!list || typeof ResizeObserver === 'undefined') return
+    const resizeObserver = new ResizeObserver(updateIndicatorPosition)
+    resizeObserver.observe(list)
+    return () => resizeObserver.disconnect()
+  }, [updateIndicatorPosition])
 
   useEffect(() => {
     const stage = stageRef.current
@@ -81,7 +109,7 @@ export function TreatmentGallery() {
           const trigger = ScrollTrigger.create({
             trigger: stage,
             start: 'top top+=96',
-            end: () => `+=${Math.min(Math.max(window.innerHeight * 0.95, 760), 1080)}`,
+            end: () => `+=${Math.min(Math.max(window.innerHeight * 0.56, 440), 640)}`,
             pin: true,
             pinSpacing: true,
             anticipatePin: 1,
@@ -122,21 +150,35 @@ export function TreatmentGallery() {
         activationMode="automatic"
         className="hidden lg:grid lg:grid-cols-[minmax(0,1.06fr)_minmax(320px,0.72fr)] lg:gap-16"
       >
-        <TabsList variant="line" aria-label="Tratamentos disponíveis" className="h-auto w-full flex-col items-stretch justify-start p-0">
-          {treatments.map((treatment) => {
-            const active = treatment.name === selectedName
-            return (
-              <TabsTrigger className="treatment-tab" value={treatment.name} key={treatment.name}>
-                {active ? <motion.span className="treatment-active-line" layoutId="treatment-active-line" transition={{ duration: 0.24, ease: clinicEase }} /> : null}
-                <span className="min-w-0">
-                  <span className="treatment-name">{treatment.name}</span>
-                  <span className="treatment-description">{treatment.indication}</span>
-                </span>
-                <span className="treatment-duration">{treatment.duration}</span>
-              </TabsTrigger>
-            )
-          })}
-        </TabsList>
+        <LayoutGroup id="treatment-active-indicator">
+          <TabsList ref={tabsListRef} variant="line" aria-label="Tratamentos disponíveis" className="relative h-auto w-full flex-col items-stretch justify-start p-0">
+            <motion.span
+              className="treatment-active-line"
+              data-treatment-active-indicator
+              data-active-treatment={selectedName}
+              layoutId="treatment-active-line"
+              initial={false}
+              animate={{ y: indicatorY }}
+              transition={{ duration: reduceMotion ? 0 : 0.32, ease: clinicEase }}
+            />
+            {treatments.map((treatment, index) => {
+              return (
+                <TabsTrigger
+                  ref={(element) => { tabRefs.current[index] = element }}
+                  className="treatment-tab"
+                  value={treatment.name}
+                  key={treatment.name}
+                >
+                  <span className="min-w-0">
+                    <span className="treatment-name">{treatment.name}</span>
+                    <span className="treatment-description">{treatment.indication}</span>
+                  </span>
+                  <span className="treatment-duration">{treatment.duration}</span>
+                </TabsTrigger>
+              )
+            })}
+          </TabsList>
+        </LayoutGroup>
 
         <TabsContent value={selectedName} className="h-fit">
           <TreatmentImage index={selectedIndex} />
@@ -159,11 +201,11 @@ export function TreatmentGallery() {
             <AccordionTrigger className="treatment-accordion-trigger">
               <span>
                 <span className="treatment-name">{treatment.name}</span>
-                <span className="treatment-duration mt-1 block text-left">{treatment.duration}</span>
+                <span className="treatment-duration mt-2 block text-left">{treatment.duration}</span>
               </span>
             </AccordionTrigger>
-            <AccordionContent className="pb-7">
-              <p className="mb-5 text-sm leading-6 text-muted-foreground">{treatment.indication}</p>
+            <AccordionContent className="pb-6">
+              <p className="mb-6 text-sm leading-6 text-muted-foreground">{treatment.indication}</p>
               <TreatmentImage index={index} decorative />
             </AccordionContent>
           </AccordionItem>

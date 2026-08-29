@@ -6,7 +6,7 @@ export function BeforeAfter() {
   const [dragging, setDragging] = useState(false)
 
   return (
-    <div className="comparison" data-dragging={dragging}>
+    <div className="comparison photo-frame" data-dragging={dragging} data-photo-frame="comparison">
       <div className="comparison-image comparison-before" aria-hidden="true" />
       <div
         className="comparison-image comparison-after"

@@ -89,6 +89,16 @@ describe('estrutura editorial', () => {
 })
 
 describe('linguagem visual da clínica', () => {
+  it('usa a mesma moldura editorial em todos os contextos fotográficos', () => {
+    render(<App />)
+
+    const contexts = Array.from(document.querySelectorAll('[data-photo-frame]')).map((frame) =>
+      frame.getAttribute('data-photo-frame'),
+    )
+
+    expect(contexts).toEqual(expect.arrayContaining(['hero', 'clinic', 'treatment', 'comparison', 'team']))
+  })
+
   it('apresenta o plano de cuidado como uma sequência editorial, sem cards repetidos', () => {
     render(<App />)
 
@@ -125,5 +135,19 @@ describe('linguagem visual da clínica', () => {
     expect(primary).toHaveAttribute('data-variant', 'default')
     expect(primary.querySelector('[data-button-arrow]')).toBeInTheDocument()
     expect(secondary).toHaveAttribute('data-variant', 'secondary')
+  })
+
+  it('mantém um único indicador animado dentro do tratamento ativo', async () => {
+    render(<App />)
+
+    const drainage = screen.getByRole('tab', { name: /Drenagem linfática/ })
+    fireEvent.mouseDown(drainage, { button: 0, ctrlKey: false })
+
+    await waitFor(() => expect(drainage).toHaveAttribute('aria-selected', 'true'))
+    expect(document.querySelector('[data-treatment-active-indicator]')).toHaveAttribute(
+      'data-active-treatment',
+      'Drenagem linfática',
+    )
+    expect(document.querySelectorAll('[data-treatment-active-indicator]')).toHaveLength(1)
   })
 })

@@ -15,14 +15,14 @@ export function Header() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="relative z-30 border-b border-gold/45">
-      <div className="page-grid flex min-h-20 items-center justify-between gap-4 py-3 md:min-h-24">
+    <header className="header-rule relative z-30">
+      <div className="page-grid flex min-h-20 items-center justify-between gap-4 py-4 md:min-h-24">
         <a className="font-display text-[1.28rem] leading-none font-semibold tracking-[-0.025em]" href="#inicio" aria-label="Clínica Olívia Salles, início">
           Olívia Salles
-          <span className="mt-1 block font-sans text-[0.58rem] font-medium tracking-[0.16em] text-muted-foreground">CLÍNICA DE ESTÉTICA</span>
+          <span className="mt-2 block font-sans text-[0.58rem] font-medium tracking-[0.16em] text-muted-foreground">CLÍNICA DE ESTÉTICA</span>
         </a>
 
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegação principal">
+        <nav className="hidden items-center gap-6 lg:flex" aria-label="Navegação principal">
           {links.map(([label, href]) => (
             <a className="nav-link" href={href} key={href}>
               {label}
@@ -50,9 +50,9 @@ export function Header() {
       </div>
 
       {open ? (
-        <nav id="mobile-nav" className="page-grid border-t border-gold/45 bg-clinic-pink py-3 lg:hidden" aria-label="Navegação móvel">
+        <nav id="mobile-nav" className="mobile-nav page-grid bg-clinic-pink py-4 lg:hidden" aria-label="Navegação móvel">
           {links.map(([label, href]) => (
-            <a className="block border-b border-gold/35 py-4 text-sm font-medium" href={href} key={href} onClick={() => setOpen(false)}>
+            <a className="mobile-nav-link block py-4 text-sm font-medium" href={href} key={href} onClick={() => setOpen(false)}>
               {label}
             </a>
           ))}

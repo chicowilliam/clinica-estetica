@@ -69,7 +69,7 @@ export function TeamPortrait() {
 
   return (
     <div ref={sectionRef} className="team-portrait">
-      <div ref={frameRef} className="team-portrait-frame">
+      <div ref={frameRef} className="team-portrait-frame photo-frame" data-photo-frame="team">
         <img
           ref={imageRef}
           src="/images/hero-marina.jpg"
