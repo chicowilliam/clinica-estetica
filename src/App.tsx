@@ -1,39 +1,34 @@
+import { AdaptiveExperience } from '@/components/AdaptiveExperience'
 import { BeforeAfter } from '@/components/BeforeAfter'
 import { BookingForm } from '@/components/BookingForm'
 import { CareValues } from '@/components/CareValues'
+import { ContrastSection } from '@/components/ContrastSection'
 import { Header } from '@/components/Header'
 import { Hero } from '@/components/Hero'
 import { LocationMap } from '@/components/LocationMap'
+import { Magnetic } from '@/components/Magnetic'
 import { Reveal } from '@/components/Reveal'
 import { TeamPortrait } from '@/components/TeamPortrait'
 import { Testimonials } from '@/components/Testimonials'
+import { TreatmentMarquee } from '@/components/TreatmentMarquee'
 import { TreatmentGallery } from '@/components/TreatmentGallery'
-import { WhatsAppIcon } from '@/components/icons'
+import { WhatsAppDock } from '@/components/WhatsAppDock'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { buildWhatsAppUrl } from '@/lib/booking'
-
-const directWhatsAppUrl = buildWhatsAppUrl(
-  {
-    name: 'Paciente',
-    phone: 'A combinar',
-    treatment: 'Avaliação inicial',
-    preferredDate: 'A combinar',
-    preferredTime: 'A combinar',
-  },
-  import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined,
-)
 
 function App() {
   return (
     <div id="inicio" className="min-h-screen overflow-x-clip bg-background text-foreground">
+      <a className="skip-link" href="#conteudo">Ir para o conteúdo</a>
+      <AdaptiveExperience />
       <Header />
 
-      <main>
+      <main id="conteudo">
         <Hero />
 
-        <section id="clinica" className="section-cream scroll-mt-6" aria-labelledby="clinic-title">
+        <section id="clinica" className="section-cream scroll-mt-28" aria-labelledby="clinic-title">
           <div className="page-grid">
+            <Separator className="section-divider" />
             <div className="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.75fr)] lg:items-end lg:gap-16">
               <figure>
                 <div className="clinic-photo photo-frame" data-photo-frame="clinic">
@@ -61,8 +56,9 @@ function App() {
           </div>
         </section>
 
-        <section id="tratamentos" className="section-pink scroll-mt-6" aria-labelledby="treatments-title">
+        <section id="tratamentos" className="section-pink scroll-mt-28" aria-labelledby="treatments-title">
           <div className="page-grid">
+            <Separator className="section-divider" />
             <div className="grid gap-6 md:grid-cols-[0.62fr_1fr] md:items-end">
               <p className="eyebrow">Tratamentos</p>
               <div>
@@ -76,32 +72,46 @@ function App() {
           </div>
         </section>
 
-        <section id="resultados" className="section-cream section-curve scroll-mt-6" aria-labelledby="results-title">
+        <TreatmentMarquee />
+        <ContrastSection />
+
+        <section id="resultados" className="section-cream scroll-mt-28" aria-labelledby="results-title">
           <Reveal className="page-grid">
+            <Separator className="section-divider" />
             <div className="grid gap-6 lg:grid-cols-[0.7fr_1fr] lg:items-end">
               <div>
                 <p className="eyebrow">Antes e depois</p>
                 <h2 id="results-title" className="section-title mt-6 max-w-xl">Mudanças reais costumam ser graduais.</h2>
               </div>
               <p className="body-copy max-w-2xl lg:justify-self-end">
-                Este comparativo ilustra uma melhora sutil de textura após um protocolo fictício de cuidado da pele. Arraste a linha para observar; resposta, número de sessões e manutenção variam de pessoa para pessoa.
+                Este comparativo ilustra uma melhora sutil de textura após um protocolo de cuidado da pele. Arraste a linha para observar; resposta, número de sessões e manutenção variam de pessoa para pessoa.
               </p>
             </div>
-            <div className="mt-10">
+            <div className="results-case-grid mt-10">
               <BeforeAfter />
-            </div>
-            <Separator className="inset-hairline mt-6" data-inset-rule />
-            <div className="mt-4 flex flex-col gap-2 text-xs leading-5 text-muted-foreground sm:flex-row sm:justify-between">
-              <p>Controle ilustrativo para esta peça de portfólio.</p>
-              <p className="max-w-2xl sm:text-right">Imagens e caso são fictícios. Nenhum resultado é garantido; a indicação depende de avaliação profissional.</p>
+              <aside className="results-notes" aria-label="Leitura do comparativo">
+                <p className="data-label">Leitura do comparativo</p>
+                <h3 className="subheading mt-4">O objetivo não é mudar o rosto. É devolver uniformidade à pele.</h3>
+                <p className="mt-4 text-sm leading-7 text-muted-foreground">
+                  O registro lado a lado ajuda a discutir textura, luminosidade e resposta gradual — sem prometer um resultado padronizado.
+                </p>
+                <dl className="results-facts mt-8">
+                  <div><dt>Protocolo</dt><dd>Cuidado de textura</dd></div>
+                  <div><dt>Registro</dt><dd>Mesma luz e posição</dd></div>
+                  <div><dt>Indicação</dt><dd>Somente após avaliação</dd></div>
+                </dl>
+                <p className="mt-6 text-xs leading-5 text-muted-foreground">Imagem ilustrativa. Resposta e número de sessões variam de pessoa para pessoa.</p>
+              </aside>
             </div>
           </Reveal>
         </section>
 
-        <section id="equipe" className="section-pink scroll-mt-6" aria-labelledby="team-title">
-          <div className="page-grid grid gap-10 lg:grid-cols-[minmax(320px,0.72fr)_minmax(0,1fr)] lg:gap-16">
-            <TeamPortrait />
-            <div className="self-center">
+        <section id="equipe" className="section-pink scroll-mt-28" aria-labelledby="team-title">
+          <div className="page-grid">
+            <Separator className="section-divider" />
+            <div className="grid gap-10 lg:grid-cols-[minmax(320px,0.72fr)_minmax(0,1fr)] lg:gap-16">
+              <TeamPortrait />
+              <div className="self-center">
               <p className="eyebrow">Equipe</p>
               <h2 id="team-title" className="section-title mt-6">Marina Avelar</h2>
               <p className="mt-2 font-display text-2xl italic text-primary">Biomedicina estética e tecnologias da pele</p>
@@ -118,13 +128,14 @@ function App() {
                   <dd>Avaliação facial, tecnologias, peelings e protocolos combinados</dd>
                 </div>
               </dl>
-              <p className="mt-4 text-xs leading-5 text-muted-foreground">Perfil profissional criado exclusivamente para este projeto conceitual.</p>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="section-cream section-curve" aria-labelledby="testimonials-title">
+        <section className="section-cream" aria-labelledby="testimonials-title">
           <div className="page-grid">
+            <Separator className="section-divider" />
             <div className="grid gap-6 md:grid-cols-[0.62fr_1fr] md:items-end">
               <p className="eyebrow">Relatos de atendimento</p>
               <h2 id="testimonials-title" className="section-title max-w-3xl">O que as pacientes lembram depois da consulta.</h2>
@@ -133,8 +144,9 @@ function App() {
           </div>
         </section>
 
-        <section id="agendamento" className="section-pink scroll-mt-6" aria-labelledby="booking-title">
+        <section id="agendamento" className="section-pink scroll-mt-28" aria-labelledby="booking-title">
           <Reveal className="page-grid">
+            <Separator className="section-divider" />
             <div className="grid gap-6 md:grid-cols-[0.62fr_1fr] md:items-end">
               <p className="eyebrow">Agendamento</p>
               <div>
@@ -142,15 +154,17 @@ function App() {
                 <p className="body-copy mt-6 max-w-2xl">Você envia uma preferência; a equipe confirma o melhor horário pelo WhatsApp.</p>
               </div>
             </div>
-            <div className="elevated-panel mt-10">
+            <div className="mt-10">
               <BookingForm />
             </div>
           </Reveal>
         </section>
 
-        <section id="contato" className="section-cream section-curve scroll-mt-6" aria-labelledby="contact-title">
-          <Reveal className="page-grid grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(380px,1fr)] lg:items-start lg:gap-16">
-            <div>
+        <section id="contato" className="section-cream scroll-mt-28" aria-labelledby="contact-title">
+          <Reveal className="page-grid">
+            <Separator className="section-divider" />
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(380px,1fr)] lg:items-start lg:gap-16">
+              <div>
               <p className="eyebrow">Localização e contato</p>
               <h2 id="contact-title" className="section-title mt-6">Atendimento com hora marcada no Jardim Paulista.</h2>
               <address className="mt-10 not-italic">
@@ -173,29 +187,42 @@ function App() {
                 <Separator className="inset-hairline" data-inset-rule />
                 <div className="contact-row"><span>Instagram</span><a href="https://instagram.com" target="_blank" rel="noreferrer">@clinicaoliviasalles</a></div>
               </div>
-            </div>
+              </div>
 
-            <div>
               <LocationMap />
-              <p className="mt-4 text-xs leading-5 text-muted-foreground">Endereço, telefone e perfis são fictícios e aparecem apenas para demonstrar a experiência completa do site.</p>
             </div>
           </Reveal>
         </section>
       </main>
 
-      <footer className="footer-rule bg-background py-6">
-        <div className="page-grid flex flex-col gap-4 text-xs leading-5 text-muted-foreground sm:flex-row sm:items-end sm:justify-between">
-          <p><span className="font-display text-lg font-semibold text-foreground">Olívia Salles</span><br />Projeto conceitual de portfólio. Todo o conteúdo é fictício.</p>
-          <p className="sm:text-right">© 2026 Clínica Olívia Salles<br />Estética com indicação responsável.</p>
+      <footer className="site-footer bg-foreground text-primary-foreground">
+        <div className="page-grid footer-grid">
+          <div>
+            <p className="font-display text-3xl font-semibold tracking-[-0.035em]">Olívia Salles</p>
+            <p className="mt-3 max-w-xs text-sm leading-6 text-primary-foreground/65">Estética com indicação responsável, tempo de consulta e acompanhamento.</p>
+          </div>
+          <nav className="footer-nav" aria-label="Navegação do rodapé">
+            <a href="#clinica">A clínica</a>
+            <a href="#tratamentos">Tratamentos</a>
+            <a href="#resultados">Resultados</a>
+            <a href="#contato">Contato</a>
+          </nav>
+          <div className="text-sm leading-7 text-primary-foreground/70">
+            <p>Jardim Paulista · São Paulo</p>
+            <a href="tel:+5511999999999">(11) 99999-9999</a>
+          </div>
+          <Magnetic className="footer-magnetic">
+            <Button asChild className="footer-cta">
+              <a href="#agendamento" data-cursor-label="Agendar">Solicitar avaliação<ButtonArrow /></a>
+            </Button>
+          </Magnetic>
+        </div>
+        <div className="page-grid footer-legal">
+          <p>© 2026 Clínica Olívia Salles</p>
+          <p>Projeto conceitual: nomes, casos, endereço e contatos são fictícios.</p>
         </div>
       </footer>
-
-      <Button asChild variant="control" className="whatsapp-dock">
-        <a href={directWhatsAppUrl} target="_blank" rel="noreferrer" aria-label="Conversar com a clínica pelo WhatsApp">
-          <WhatsAppIcon />
-          <span>WhatsApp</span>
-        </a>
-      </Button>
+      <WhatsAppDock />
     </div>
   )
 }

@@ -46,7 +46,6 @@ function TreatmentImage({ index, decorative = false }: { index: number; decorati
 
 export function TreatmentGallery() {
   const reduceMotion = useReducedMotion()
-  const stageRef = useRef<HTMLDivElement>(null)
   const tabsListRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
   const selectedNameRef = useRef(treatments[0].name)
@@ -82,67 +81,8 @@ export function TreatmentGallery() {
     return () => resizeObserver.disconnect()
   }, [updateIndicatorPosition])
 
-  useEffect(() => {
-    const stage = stageRef.current
-    if (!stage) return
-
-    if (reduceMotion) {
-      stage.dataset.gsapState = 'reduced'
-      return
-    }
-
-    let cancelled = false
-    let releaseGsap: (() => void) | undefined
-    let observer: IntersectionObserver | undefined
-
-    const setup = () => {
-      observer?.disconnect()
-      void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([gsapModule, scrollTriggerModule]) => {
-        if (cancelled) return
-        const gsap = gsapModule.gsap
-        const ScrollTrigger = scrollTriggerModule.ScrollTrigger
-        gsap.registerPlugin(ScrollTrigger)
-
-        const media = gsap.matchMedia()
-        media.add('(min-width: 1024px)', () => {
-          stage.dataset.gsapState = 'ready'
-          const trigger = ScrollTrigger.create({
-            trigger: stage,
-            start: 'top top+=96',
-            end: () => `+=${Math.min(Math.max(window.innerHeight * 0.56, 440), 640)}`,
-            pin: true,
-            pinSpacing: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const index = Math.min(treatments.length - 1, Math.round(self.progress * (treatments.length - 1)))
-              selectTreatment(treatments[index].name)
-            },
-          })
-
-          return () => trigger.kill()
-        })
-
-        releaseGsap = () => media.revert()
-      })
-    }
-
-    if ('IntersectionObserver' in window) {
-      observer = new IntersectionObserver(([entry]) => entry.isIntersecting && setup(), { rootMargin: '260px' })
-      observer.observe(stage)
-    } else {
-      setup()
-    }
-
-    return () => {
-      cancelled = true
-      observer?.disconnect()
-      releaseGsap?.()
-    }
-  }, [reduceMotion, selectTreatment])
-
   return (
-    <div ref={stageRef} className="treatment-pin-stage" data-gsap-moment="treatment-pin" data-gsap-state="pending">
+    <div className="treatment-pin-stage">
       <Tabs
         value={selectedName}
         onValueChange={selectTreatment}
